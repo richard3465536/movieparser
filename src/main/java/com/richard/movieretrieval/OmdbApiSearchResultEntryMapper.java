@@ -2,8 +2,11 @@ package com.richard.movieretrieval;
 
 import java.util.Optional;
 
+import org.springframework.stereotype.Component;
+
 import com.richard.model.Movie;
 
+@Component
 public class OmdbApiSearchResultEntryMapper {
 
 	private static final String TYPE_MOVIE = "movie";

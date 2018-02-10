@@ -2,13 +2,8 @@ package com.richard.model;
 
 import static com.richard.util.ArgumentValidationUtil.validateNotEmpty;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class Movie {
 
-	@JsonProperty(value = "Title")
 	private String name;
 
 	public Movie() {
@@ -53,5 +48,4 @@ public class Movie {
 			return false;
 		return true;
 	}
-
 }
