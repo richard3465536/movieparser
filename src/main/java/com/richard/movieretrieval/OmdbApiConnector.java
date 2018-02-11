@@ -15,6 +15,7 @@ import com.richard.model.Movie;
 
 public class OmdbApiConnector {
 
+	private static final String TITLE_SEARCH_URL_PREFIX = "http://www.omdbapi.com?apikey=45f500b&s=";
 	private final OmdbApiSearchResultEntryMapper entryMapper;
 	private final RestTemplate restTemplate;
 
@@ -26,12 +27,16 @@ public class OmdbApiConnector {
 
 	public List<Movie> query(String searchPhrase) {
 		validateNotEmpty(searchPhrase);
-		String url = "http://www.omdbapi.com?apikey=45f500b&s=" + searchPhrase;
+		String url = getTargetUrl(searchPhrase);
 		SearchResultList response = restTemplate.getForObject(url, SearchResultList.class);
 		if (response.hasResults()) {
 			return processSearchResult(response);
 		}
 		return new ArrayList<>();
+	}
+
+	private String getTargetUrl(String searchPhrase) {
+		return TITLE_SEARCH_URL_PREFIX + searchPhrase;
 	}
 
 	private List<Movie> processSearchResult(SearchResultList searchResult) {
