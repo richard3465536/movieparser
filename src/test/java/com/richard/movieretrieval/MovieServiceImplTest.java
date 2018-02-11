@@ -26,14 +26,16 @@ public class MovieServiceImplTest {
 		movieService = new MovieServiceImpl(apiConnector);
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void nullTitle() throws Exception {
-		movieService.getMovieByTitle(null);
+		Optional<Movie> movie = movieService.getMovieByTitle(null);
+		assertThat(movie.isPresent(), is(false));
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void emptyTitle() throws Exception {
-		movieService.getMovieByTitle("");
+		Optional<Movie> movie = movieService.getMovieByTitle("");
+		assertThat(movie.isPresent(), is(false));
 	}
 
 	@Test

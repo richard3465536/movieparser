@@ -1,9 +1,9 @@
 package com.richard.movieretrieval;
 
-import static com.richard.util.ArgumentValidationUtil.validateNotEmpty;
-
 import java.util.List;
 import java.util.Optional;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.richard.model.Movie;
 import com.richard.movieretrieval.omdb.OmdbApiConnector;
@@ -18,8 +18,9 @@ public class MovieServiceImpl implements MovieService {
 
 	@Override
 	public Optional<Movie> getMovieByTitle(String title) {
-		validateNotEmpty(title);
-
+		if (StringUtils.isEmpty(title)) {
+			return Optional.empty();
+		}
 		List<Movie> queryResult = imdbApiConnector.query(title);
 		return queryResult.stream().findFirst();
 	}
