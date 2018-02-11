@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.richard.model.Movie;
+import com.richard.movieretrieval.omdb.OmdbApiConnector;
 
 public class MovieServiceImpl implements MovieService {
 

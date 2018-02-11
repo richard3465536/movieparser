@@ -1,4 +1,4 @@
-package com.richard.movieretrieval;
+package com.richard.movieretrieval.omdb;
 
 import java.util.List;
 

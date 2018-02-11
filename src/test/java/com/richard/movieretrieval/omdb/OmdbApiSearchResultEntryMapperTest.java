@@ -1,4 +1,4 @@
-package com.richard.movieretrieval;
+package com.richard.movieretrieval.omdb;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;

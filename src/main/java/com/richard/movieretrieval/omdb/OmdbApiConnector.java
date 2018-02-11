@@ -1,4 +1,4 @@
-package com.richard.movieretrieval;
+package com.richard.movieretrieval.omdb;
 
 import static com.richard.util.ArgumentValidationUtil.validateNotEmpty;
 

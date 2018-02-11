@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import com.richard.model.Movie;
+import com.richard.movieretrieval.omdb.OmdbApiConnector;
 
 public class MovieServiceImplTest {
 
