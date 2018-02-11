@@ -9,10 +9,12 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import com.richard.model.Movie;
 
+@Component
 public class OmdbApiConnector {
 
 	private static final String TITLE_SEARCH_URL_PREFIX = "http://www.omdbapi.com?apikey=45f500b&s=";

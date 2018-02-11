@@ -4,10 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.stereotype.Component;
 
 import com.richard.model.Movie;
 import com.richard.movieretrieval.omdb.OmdbApiConnector;
 
+@Component
 public class MovieServiceImpl implements MovieService {
 
 	private final OmdbApiConnector imdbApiConnector;

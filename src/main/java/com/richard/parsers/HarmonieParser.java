@@ -24,6 +24,7 @@ import com.richard.model.Location;
 import com.richard.model.Movie;
 import com.richard.model.Screening;
 import com.richard.model.ScreeningConfiguration;
+import com.richard.movieretrieval.MovieService;
 import com.richard.util.ArgumentValidationUtil;
 
 @Component
@@ -36,6 +37,12 @@ public class HarmonieParser implements ScreeningParser {
 	private static final String UTF_8 = "UTF-8";
 	private static final Location LOCATION = new Location("Harmonie");
 	private static final ScreeningConfiguration SCREENING_CONFIGURATION = new ScreeningConfiguration(Locale.ENGLISH);
+
+	private final MovieService movieService;
+
+	public HarmonieParser(MovieService movieService) {
+		this.movieService = movieService;
+	}
 
 	@Override
 	public List<Screening> parse(String url) {
@@ -74,32 +81,34 @@ public class HarmonieParser implements ScreeningParser {
 	}
 
 	private List<Screening> getScreenings(Element programItem, LocalDate scheduleStart) {
-		List<Screening> screenings = new ArrayList<>();
 		String movieTitle = getMovieTitle(programItem);
-		try {
-			Movie movie = new Movie(movieTitle);
-			for (ZonedDateTime screeningTime : getScreeningTimes(programItem, scheduleStart)) {
-				Screening screening = new Screening(movie, LOCATION, screeningTime, SCREENING_CONFIGURATION);
-				screenings.add(screening);
-			}
-		} catch (IllegalArgumentException exception) {
-			// TODO logging
+		Optional<Movie> retrievedMovie = movieService.getMovieByTitle(movieTitle);
+		if (retrievedMovie.isPresent()) {
+			Movie movie = retrievedMovie.get();
+			return getScreeningsOfMovie(programItem, movie, scheduleStart);
 		}
-
-		return screenings;
+		return new ArrayList<>();
 	}
 
 	private String getMovieTitle(Element programItem) {
 		Elements programItemRightTitle = programItem.getElementsByClass("program-item-right-title");
-		String movieTitle = programItemRightTitle.text();
-		return movieTitle;
+		return programItemRightTitle.text();
+	}
+
+	private ArrayList<Screening> getScreeningsOfMovie(Element programItem, Movie movie, LocalDate scheduleStart) {
+		ArrayList<Screening> screeningsOfMovie = new ArrayList<Screening>();
+		for (ZonedDateTime screeningTime : getScreeningTimes(programItem, scheduleStart)) {
+			Screening screening = new Screening(movie, LOCATION, screeningTime, SCREENING_CONFIGURATION);
+			screeningsOfMovie.add(screening);
+		}
+		return screeningsOfMovie;
 	}
 
 	private List<ZonedDateTime> getScreeningTimes(Element programItem, LocalDate scheduleStart) {
 		List<ZonedDateTime> screeningTimes = new ArrayList<>();
 		LocalDate screeningDate = scheduleStart;
 
-		for (Element dailyScreeningElement : getdailyScreeningElements(programItem)) {
+		for (Element dailyScreeningElement : getDailyScreeningElements(programItem)) {
 			for (Element timeElement : dailyScreeningElement.getElementsByTag("p")) {
 				Optional<ZonedDateTime> screeningTime = getScreeningTime(timeElement, screeningDate);
 				screeningTime.ifPresent(screeningTimes::add);
@@ -109,7 +118,7 @@ public class HarmonieParser implements ScreeningParser {
 		return screeningTimes;
 	}
 
-	private List<Element> getdailyScreeningElements(Element programItem) {
+	private List<Element> getDailyScreeningElements(Element programItem) {
 		List<Element> dayScreeningTimeElements = new ArrayList<>();
 		try {
 			Element scheduleTable = programItem.getElementsByClass("program-item-right-screenings").get(0).child(0);
