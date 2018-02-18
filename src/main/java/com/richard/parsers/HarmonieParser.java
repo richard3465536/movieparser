@@ -47,13 +47,24 @@ public class HarmonieParser implements ScreeningParser {
 	@Override
 	public List<Screening> parse(String url) {
 		ArgumentValidationUtil.validateNotEmpty(url);
-
 		Document website = readWebsite(url);
-		LocalDate scheduleStart = getScheduleStart(website);
+		return getScreenings(website);
+	}
 
+	private Document readWebsite(String path) {
+		File htmlFile = new File(path);
+		try {
+			return Jsoup.parse(htmlFile, UTF_8);
+		} catch (IOException exception) {
+			String message = String.format("website %s not readable", path);
+			throw new InvalidFormatException(message, exception);
+		}
+	}
+
+	private List<Screening> getScreenings(Document website) {
 		List<Screening> screenings = new ArrayList<>();
-		Elements programItems = website.getElementsByClass("program-item");
-		for (Element programItem : programItems) {
+		LocalDate scheduleStart = getScheduleStart(website);
+		for (Element programItem : getProgramItems(website)) {
 			List<Screening> screeningsSameProgramItem = getScreenings(programItem, scheduleStart);
 			screenings.addAll(screeningsSameProgramItem);
 		}
@@ -78,6 +89,10 @@ public class HarmonieParser implements ScreeningParser {
 					dateAsText, DATE_PATTERN);
 			throw new InvalidFormatException(message, exception);
 		}
+	}
+
+	private Elements getProgramItems(Document website) {
+		return website.getElementsByClass("program-item");
 	}
 
 	private List<Screening> getScreenings(Element programItem, LocalDate scheduleStart) {
@@ -144,15 +159,5 @@ public class HarmonieParser implements ScreeningParser {
 			// TODO logging
 		}
 		return Optional.ofNullable(screeningTime);
-	}
-
-	private Document readWebsite(String path) {
-		File htmlFile = new File(path);
-		try {
-			return Jsoup.parse(htmlFile, UTF_8);
-		} catch (IOException exception) {
-			String message = String.format("website %s not readable", path);
-			throw new InvalidFormatException(message, exception);
-		}
 	}
 }
