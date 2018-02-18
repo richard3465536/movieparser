@@ -18,7 +18,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.stereotype.Component;
 
 import com.richard.model.Location;
 import com.richard.model.Movie;
@@ -27,7 +26,6 @@ import com.richard.model.ScreeningConfiguration;
 import com.richard.movieretrieval.MovieService;
 import com.richard.util.ArgumentValidationUtil;
 
-@Component
 public class HarmonieParser implements ScreeningParser {
 
 	private static final String DATE_PATTERN = "dd. MMM yyyy";
