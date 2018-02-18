@@ -3,7 +3,7 @@ package com.richard.movieretrieval;
 import java.util.List;
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.richard.model.Movie;
