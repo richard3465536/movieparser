@@ -17,37 +17,57 @@ public class MovieTitleParserTest {
 		parser = new MovieTitleParser();
 	}
 
-	@Test(expected = IllegalArgumentException.class)
-	public void nullInput() throws Exception {
-		parser.parseMainTitle(null);
-	}
-
-	@Test(expected = IllegalArgumentException.class)
-	public void emptyInput() throws Exception {
-		parser.parseMainTitle("");
+	@Test
+	public void noMainTitleIfNullInput() throws Exception {
+		Optional<String> result = parser.parseMainTitle(null);
+		assertThat(result.isPresent(), is(false));
 	}
 
 	@Test
-	public void resultIsTrimmed() throws Exception {
-		String result = parser.parseMainTitle("   abc ");
-		assertThat(result, is("abc"));
+	public void noMainTitleIfEmptyInput() throws Exception {
+		Optional<String> result = parser.parseMainTitle("");
+		assertThat(result.isPresent(), is(false));
 	}
 
 	@Test
-	public void truncatesAtHyphen() throws Exception {
-		String result = parser.parseMainTitle("abc - def");
-		assertThat(result, is("abc"));
+	public void noResultIfMainTitleAbsent() throws Exception {
+		Optional<String> result = parser.parseMainTitle(" - def");
+		assertThat(result.isPresent(), is(false));
+	}
+
+	@Test
+	public void mainTitleEndsAtSeparator() throws Exception {
+		Optional<String> result = parser.parseMainTitle("abc - def");
+		assertThat(result.get(), is("abc"));
 	}
 
 	@Test
 	public void parenthesizedContentIsRemovedFromMainTitle() throws Exception {
-		String result = parser.parseMainTitle("abc(def)");
-		assertThat(result, is("abc"));
+		Optional<String> result = parser.parseMainTitle("abc(def)");
+		assertThat(result.get(), is("abc"));
+	}
+
+	@Test
+	public void mainTitleIsTrimmed() throws Exception {
+		Optional<String> result = parser.parseMainTitle("   abc ");
+		assertThat(result.get(), is("abc"));
+	}
+
+	@Test
+	public void noMainTitleIfEmptyAfterClearing() throws Exception {
+		Optional<String> result = parser.parseMainTitle("  (abc)  ");
+		assertThat(result.isPresent(), is(false));
 	}
 
 	@Test
 	public void noSubtitleIfInputNull() throws Exception {
 		Optional<String> result = parser.parseSubtitle(null);
+		assertThat(result.isPresent(), is(false));
+	}
+
+	@Test
+	public void noSubtitleIfInputEmpty() throws Exception {
+		Optional<String> result = parser.parseSubtitle("");
 		assertThat(result.isPresent(), is(false));
 	}
 
@@ -58,7 +78,7 @@ public class MovieTitleParserTest {
 	}
 
 	@Test
-	public void noResultIfSubtitleAbsent() throws Exception {
+	public void noResultIfSubTitleAbsent() throws Exception {
 		Optional<String> result = parser.parseSubtitle("abc - ");
 		assertThat(result.isPresent(), is(false));
 	}
@@ -76,8 +96,14 @@ public class MovieTitleParserTest {
 	}
 
 	@Test
-	public void subtitleIsTrimmed() throws Exception {
-		Optional<String> result = parser.parseSubtitle("abc - def    ");
+	public void subTitleIsTrimmed() throws Exception {
+		Optional<String> result = parser.parseSubtitle("abc -    def    ");
 		assertThat(result.get(), is("def"));
+	}
+
+	@Test
+	public void noSubTitleIfEmptyAfterClearing() throws Exception {
+		Optional<String> result = parser.parseSubtitle("abc -    (def)   ");
+		assertThat(result.isPresent(), is(false));
 	}
 }

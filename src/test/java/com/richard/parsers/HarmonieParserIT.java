@@ -30,10 +30,10 @@ public class HarmonieParserIT {
 	}
 
 	@Test
-	public void elevenMoviesOnlyFiveKnownWithThirtyFiveScreenings() throws Exception {
+	public void elevenMoviesOnlyNineKnownWithFiftyThreeScreenings() throws Exception {
 		List<Screening> screenings = parseScreenings("elevenMoviesWithFiftyFiveScreenings.html");
-		assertThat(screenings.size(), is(35));
-		assertThat(numberOfDifferentMovies(screenings), is(5L));
+		assertThat(screenings.size(), is(53));
+		assertThat(numberOfDifferentMovies(screenings), is(9L));
 	}
 
 	private long numberOfDifferentMovies(List<Screening> screenings) {
