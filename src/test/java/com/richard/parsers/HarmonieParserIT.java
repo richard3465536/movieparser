@@ -18,7 +18,7 @@ import com.richard.movieretrieval.MovieService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { MovieparserApplication.class })
-public class HarmonieParserIT {
+public class HarmonieParserIT extends ScreeningParserBaseTest {
 
 	private HarmonieParser harmonieParser;
 	@Autowired
@@ -31,21 +31,12 @@ public class HarmonieParserIT {
 
 	@Test
 	public void elevenMoviesOnlyNineKnownWithFiftyThreeScreenings() throws Exception {
-		List<Screening> screenings = parseScreenings("elevenMoviesWithFiftyFiveScreenings.html");
+		List<Screening> screenings = harmonieParser.parse(getUrl("elevenMoviesWithFiftyFiveScreenings.html"));
 		assertThat(screenings.size(), is(53));
 		assertThat(numberOfDifferentMovies(screenings), is(9L));
 	}
 
 	private long numberOfDifferentMovies(List<Screening> screenings) {
 		return screenings.stream().map(screening -> screening.getMovie()).distinct().count();
-	}
-
-	private List<Screening> parseScreenings(String fileName) throws InvalidFormatException {
-		String url = getUrl(fileName);
-		return harmonieParser.parse(url);
-	}
-
-	private String getUrl(String fileName) {
-		return getClass().getClassLoader().getResource(fileName).getPath();
 	}
 }

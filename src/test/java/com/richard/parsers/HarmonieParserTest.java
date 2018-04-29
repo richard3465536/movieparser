@@ -23,7 +23,7 @@ import com.richard.model.Movie;
 import com.richard.model.Screening;
 import com.richard.movieretrieval.MovieService;
 
-public class HarmonieParserTest {
+public class HarmonieParserTest extends ScreeningParserBaseTest {
 
 	private static final ZoneId ZONE_ID = ZoneId.of("Europe/Berlin");
 
@@ -59,27 +59,31 @@ public class HarmonieParserTest {
 
 	@Test
 	public void emptySchedule() throws Exception {
-		assertThat(parseScreenings("harmonieNoProgramItem.html"), is(empty()));
+		String website = getUrl("harmonieNoProgramItem.html");
+		List<Screening> screenings = harmonieParser.parse(website);
+		assertThat(screenings, is(empty()));
 	}
 
 	@Test
 	public void noScheduleTime() throws Exception {
+		String website = getUrl("harmonieNoScheduleTime.html");
 		exception.expect(InvalidFormatException.class);
 		exception.expectMessage("No schedule time");
-		parseScreenings("harmonieNoScheduleTime.html");
+		harmonieParser.parse(website);
 	}
 
 	@Test
 	public void wrongStartDateFormat() throws Exception {
+		String website = getUrl("harmonieWrongStartDateFormat.html");
 		exception.expect(InvalidFormatException.class);
 		exception.expectMessage("schedule start date (11.11.11) does not comply with expected format dd. MMM yyyy");
-		parseScreenings("harmonieWrongStartDateFormat.html");
+		harmonieParser.parse(website);
 	}
 
 	@Test
 	public void parsesScreeningTime() throws Exception {
-		Screening screening = parseFirstScreening("harmonieOneScreening.html");
 		Object expectedScreeningTime = ZonedDateTime.of(LocalDate.of(2017, 4, 5), LocalTime.of(14, 15), ZONE_ID);
+		Screening screening = parseFirstScreening("harmonieOneScreening.html");
 		assertThat(screening.getDateTime(), is(expectedScreeningTime));
 	}
 
@@ -100,25 +104,29 @@ public class HarmonieParserTest {
 
 	@Test
 	public void oneScreening() throws Exception {
-		List<Screening> screenings = parseScreenings("harmonieOneScreening.html");
+		String website = getUrl("harmonieOneScreening.html");
+		List<Screening> screenings = harmonieParser.parse(website);
 		assertThat(screenings.size(), is(1));
 	}
 
 	@Test
 	public void twoScreeningsSameProgramItemSameDay() throws Exception {
-		List<Screening> screenings = parseScreenings("harmonieTwoScreeningsSameProgramItemSameDay.html");
+		String website = getUrl("harmonieTwoScreeningsSameProgramItemSameDay.html");
+		List<Screening> screenings = harmonieParser.parse(website);
 		assertThat(screenings.size(), is(2));
 	}
 
 	@Test
 	public void twoScreeningsSameProgramItemDifferentDay() throws Exception {
-		List<Screening> screenings = parseScreenings("harmonieTwoScreeningsSameProgramItemDifferentDay.html");
+		String website = getUrl("harmonieTwoScreeningsSameProgramItemDifferentDay.html");
+		List<Screening> screenings = harmonieParser.parse(website);
 		assertThat(screenings.size(), is(2));
 	}
 
 	@Test
 	public void twoScreeningsDifferentProgramItem() throws Exception {
-		List<Screening> screenings = parseScreenings("harmonieTwoScreeningsDifferentProgramItem.html");
+		String website = getUrl("harmonieTwoScreeningsDifferentProgramItem.html");
+		List<Screening> screenings = harmonieParser.parse(website);
 		assertThat(screenings.size(), is(2));
 	}
 
@@ -141,8 +149,9 @@ public class HarmonieParserTest {
 
 	@Test
 	public void noScreeningIfMovieNotRetrievableByTitle() throws Exception {
+		String website = getUrl("harmonieOneScreening.html");
 		when(movieService.getMovieByTitle(anyString())).thenReturn(Optional.empty());
-		List<Screening> screenings = parseScreenings("harmonieOneScreening.html");
+		List<Screening> screenings = harmonieParser.parse(website);
 		assertThat(screenings, is(empty()));
 	}
 
@@ -152,21 +161,14 @@ public class HarmonieParserTest {
 	}
 
 	private Screening parseFirstScreening(String fileName) throws InvalidFormatException {
-		List<Screening> screenings = parseScreenings(fileName);
+		String website = getUrl(fileName);
+		List<Screening> screenings = harmonieParser.parse(website);
 		return screenings.get(0);
 	}
 
-	private List<Screening> parseScreenings(String fileName) throws InvalidFormatException {
-		String url = getUrl(fileName);
-		return harmonieParser.parse(url);
-	}
-
-	private String getUrl(String fileName) {
-		return getClass().getClassLoader().getResource(fileName).getPath();
-	}
-
 	private void assertNoScreenings(String fileName) {
-		List<Screening> screenings = parseScreenings(fileName);
+		String website = getUrl(fileName);
+		List<Screening> screenings = harmonieParser.parse(website);
 		assertThat(screenings, is(empty()));
 	}
 }
