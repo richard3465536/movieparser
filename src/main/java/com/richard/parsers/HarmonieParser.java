@@ -1,7 +1,5 @@
 package com.richard.parsers;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -14,7 +12,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -24,7 +21,6 @@ import com.richard.model.Movie;
 import com.richard.model.Screening;
 import com.richard.model.ScreeningConfiguration;
 import com.richard.movieretrieval.MovieService;
-import com.richard.util.ArgumentValidationUtil;
 
 public class HarmonieParser implements ScreeningParser {
 
@@ -32,7 +28,6 @@ public class HarmonieParser implements ScreeningParser {
 	private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder().parseCaseInsensitive()
 			.appendPattern(DATE_PATTERN).toFormatter(Locale.ENGLISH);
 	private static final ZoneId ZONE_ID = ZoneId.of("Europe/Berlin");
-	private static final String UTF_8 = "UTF-8";
 	private static final Location LOCATION = new Location("Harmonie");
 	private static final ScreeningConfiguration SCREENING_CONFIGURATION = new ScreeningConfiguration(Locale.ENGLISH);
 
@@ -43,26 +38,10 @@ public class HarmonieParser implements ScreeningParser {
 	}
 
 	@Override
-	public List<Screening> parse(String url) {
-		ArgumentValidationUtil.validateNotEmpty(url);
-		Document website = readWebsite(url);
-		return getScreenings(website);
-	}
-
-	private Document readWebsite(String path) {
-		File htmlFile = new File(path);
-		try {
-			return Jsoup.parse(htmlFile, UTF_8);
-		} catch (IOException exception) {
-			String message = String.format("website %s not readable", path);
-			throw new InvalidFormatException(message, exception);
-		}
-	}
-
-	private List<Screening> getScreenings(Document website) {
+	public List<Screening> parse(Document htmlDocument) {
 		List<Screening> screenings = new ArrayList<>();
-		LocalDate scheduleStart = getScheduleStart(website);
-		for (Element programItem : getProgramItems(website)) {
+		LocalDate scheduleStart = getScheduleStart(htmlDocument);
+		for (Element programItem : getProgramItems(htmlDocument)) {
 			List<Screening> screeningsSameProgramItem = getScreenings(programItem, scheduleStart);
 			screenings.addAll(screeningsSameProgramItem);
 		}

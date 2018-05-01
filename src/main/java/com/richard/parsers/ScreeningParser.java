@@ -2,9 +2,11 @@ package com.richard.parsers;
 
 import java.util.List;
 
+import org.jsoup.nodes.Document;
+
 import com.richard.model.Screening;
 
 public interface ScreeningParser {
 
-	public List<Screening> parse(String url);
+	public List<Screening> parse(Document htmlDocument);
 }

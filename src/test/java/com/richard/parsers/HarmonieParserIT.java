@@ -5,6 +5,7 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import org.jsoup.nodes.Document;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,7 +32,8 @@ public class HarmonieParserIT extends ScreeningParserBaseTest {
 
 	@Test
 	public void elevenMoviesOnlyNineKnownWithFiftyThreeScreenings() throws Exception {
-		List<Screening> screenings = harmonieParser.parse(getUrl("elevenMoviesWithFiftyFiveScreenings.html"));
+		Document website = readWebsite("elevenMoviesWithFiftyFiveScreenings.html");
+		List<Screening> screenings = harmonieParser.parse(website);
 		assertThat(screenings.size(), is(53));
 		assertThat(numberOfDifferentMovies(screenings), is(9L));
 	}
