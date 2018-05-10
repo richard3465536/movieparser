@@ -32,7 +32,7 @@ public class HarmonieParserIT extends ScreeningParserBaseTest {
 
 	@Test
 	public void elevenMoviesOnlyNineKnownWithFiftyThreeScreenings() throws Exception {
-		Document website = readWebsite("elevenMoviesWithFiftyFiveScreenings.html");
+		Document website = readWebsite("elevenMoviesWithFiftyFourScreenings.html");
 		List<Screening> screenings = harmonieParser.parse(website);
 		assertThat(screenings.size(), is(53));
 		assertThat(numberOfDifferentMovies(screenings), is(9L));
