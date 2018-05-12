@@ -18,7 +18,7 @@ public abstract class AbstractScreeningCollector implements ScreeningCollector {
 	}
 
 	@Override
-	public List<Screening> collect() {
+	public final List<Screening> collect() {
 		try {
 			Document htmlDocument = websiteReader.read(getUrl());
 			return getScreeningParser().parse(htmlDocument);
