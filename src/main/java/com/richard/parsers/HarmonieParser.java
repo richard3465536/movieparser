@@ -26,7 +26,7 @@ public class HarmonieParser implements ScreeningParser {
 
 	private static final String DATE_PATTERN = "dd. MMM yyyy";
 	private static final DateTimeFormatter DATE_FORMATTER = new DateTimeFormatterBuilder().parseCaseInsensitive()
-			.appendPattern(DATE_PATTERN).toFormatter(Locale.ENGLISH);
+			.appendPattern(DATE_PATTERN).toFormatter(Locale.GERMAN);
 	private static final ZoneId ZONE_ID = ZoneId.of("Europe/Berlin");
 	private static final Location LOCATION = new Location("Harmonie");
 	private static final ScreeningConfiguration SCREENING_CONFIGURATION = new ScreeningConfiguration(Locale.ENGLISH);
