@@ -8,5 +8,5 @@ import com.richard.model.Screening;
 
 public interface ScreeningParser {
 
-	public List<Screening> parse(Document htmlDocument);
+	List<Screening> parse(Document htmlDocument);
 }
